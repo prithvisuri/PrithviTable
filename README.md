@@ -46,3 +46,25 @@ kubectl apply -f k8s/app.yaml
 The table manager creates tables with an auto-generated integer `id` primary key. Supported column types are `VARCHAR(255)`, `INT`, `BIGINT`, `TEXT`, `DATE`, `DATETIME`, `DECIMAL(10,2)`, and `BOOLEAN`. Row edit/delete is enabled only for tables with a primary key. Primary-key columns cannot be deleted; data loss operations ask for confirmation.
 
 The API reports configuration, permission, and connection problems in the page rather than showing an empty success state.
+
+## CI, SonarCloud, npm, and Docker Hub publishing
+
+The GitHub Actions workflow at `.github/workflows/npm-publish.yml` runs on pull requests to `main`, pushes to `main`, and published GitHub releases. The quality job installs locked dependencies, checks JavaScript syntax, and runs SonarCloud analysis; the SonarCloud quality gate must pass before a release can be published. The publish job runs only for a published release, takes the npm package version and Docker image tag from its semantic version tag (for example `v1.2.3` becomes `1.2.3`), and publishes both the public npm package and `<dockerhub-user>/mysql-table-viewer:latest`.
+
+Configure these repository secrets:
+
+| Secret | Purpose |
+| --- | --- |
+| `SONAR_TOKEN` | SonarCloud analysis token |
+| `npm_token` | npm automation token with package publish permission |
+| `DOCKERHUB_USERNAME` | Docker Hub account username |
+| `DOCKERHUB_TOKEN` | Docker Hub access token with write permission |
+
+Configure these repository variables:
+
+| Variable | Purpose |
+| --- | --- |
+| `SONAR_ORGANIZATION` | SonarCloud organization key |
+| `SONAR_PROJECT_KEY` | SonarCloud project key |
+
+Create the `mysql-table-viewer` repository under the configured Docker Hub account and configure the SonarCloud project/quality gate to check bugs, vulnerabilities, security hotspots, and code smells. The workflow waits for the SonarCloud quality gate before publishing. Create and publish a GitHub release with a semantic version tag such as `v1.2.3` to publish artifacts.
