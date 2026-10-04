@@ -1,0 +1,36 @@
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: development
+      APP_LOGIN_ID: admin
+      APP_LOGIN_PASSWORD: ${APP_LOGIN_PASSWORD:-Admin123!}
+      SESSION_SECRET: ${SESSION_SECRET:-local-development-session-secret-change-me}
+      MYSQL_HOST: mysql
+      MYSQL_PORT: 3306
+      MYSQL_USER: viewer
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-local-viewer-password}
+      MYSQL_DATABASE: appdata
+      MYSQL_TABLE: demo_records
+    depends_on:
+      mysql:
+        condition: service_healthy
+  mysql:
+    image: mysql:8.4
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-local-root-password}
+      MYSQL_DATABASE: appdata
+      MYSQL_USER: viewer
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-local-viewer-password}
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./sql/init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root -p$${MYSQL_ROOT_PASSWORD}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+volumes:
+  mysql-data:

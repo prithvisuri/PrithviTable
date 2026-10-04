@@ -1,0 +1,88 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-table-viewer-config
+data:
+  APP_LOGIN_ID: admin
+  MYSQL_HOST: mysql
+  MYSQL_PORT: "3306"
+  MYSQL_DATABASE: appdata
+  MYSQL_TABLE: demo_records
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql-table-viewer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql-table-viewer
+  template:
+    metadata:
+      labels:
+        app: mysql-table-viewer
+    spec:
+      containers:
+        - name: app
+          image: mysql-table-viewer:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 3000
+          envFrom:
+            - configMapRef:
+                name: mysql-table-viewer-config
+          env:
+            - name: APP_LOGIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-table-viewer-secrets
+                  key: app-login-password
+            - name: SESSION_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-table-viewer-secrets
+                  key: session-secret
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-table-viewer-secrets
+                  key: mysql-user
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-table-viewer-secrets
+                  key: mysql-password
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 3
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-table-viewer
+spec:
+  selector:
+    app: mysql-table-viewer
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+  type: ClusterIP

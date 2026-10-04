@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#102f34">
+    <title>PrithviTable | Data portal</title>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <main class="page-shell">
+      <section class="brand-panel" aria-label="Application information">
+        <div class="brand-lockup"><span class="brand-mark">N</span><span>PrithviTable</span></div>
+        <div class="brand-message">
+          <p class="eyebrow">YOUR DATA, IN FOCUS</p>
+          <h1>A clearer view<br>of what matters.</h1>
+          <p class="brand-copy">A calm, secure space to explore your team's data.</p>
+        </div>
+        <div class="brand-footer"><span class="status-dot"></span> Private workspace <span class="footer-divider">·</span> Secure access</div>
+      </section>
+
+      <section class="content-panel">
+        <div id="login-view" class="login-card">
+          <div class="mobile-brand"><span class="brand-mark">N</span> PrithviTable</div>
+          <p class="eyebrow">WELCOME BACK</p>
+          <h2>Sign in to your<br>workspace</h2>
+          <p class="subheading">Enter your credentials to continue.</p>
+          <form id="login-form">
+            <label for="login-id">Login ID</label>
+            <input id="login-id" name="id" autocomplete="username" placeholder="Enter your login ID" required>
+            <label for="password">Password</label>
+            <div class="password-wrap">
+              <input id="password" name="password" type="password" autocomplete="current-password" placeholder="Enter your password" required>
+              <button type="button" id="toggle-password" class="password-toggle" aria-label="Show password">Show</button>
+            </div>
+            <p id="login-error" class="message error" role="alert" hidden></p>
+            <button class="primary-button" type="submit">Sign in <span aria-hidden="true">→</span></button>
+          </form>
+          <p class="secure-note"><span aria-hidden="true">◆</span> Your connection is private and secure</p>
+        </div>
+
+        <div id="data-view" class="data-card" hidden>
+          <header class="data-header">
+            <div>
+              <p class="eyebrow">DATA WORKSPACE</p>
+              <h2>Table overview</h2>
+              <p id="table-caption" class="subheading">Loading your data…</p>
+            </div>
+            <div class="header-actions">
+              <label class="table-picker-label" for="table-picker">Table</label>
+              <select id="table-picker" class="table-picker" aria-label="Select table"></select>
+              <button id="create-table-button" class="secondary-button" type="button">+ New table</button>
+              <button id="manage-columns-button" class="secondary-button" type="button" aria-expanded="false" aria-controls="manage-columns-panel">Columns</button>
+              <button id="delete-table-button" class="danger-button" type="button">Delete table</button>
+              <button id="add-row-button" class="primary-button add-row-button" type="button" aria-expanded="false" aria-controls="add-row-panel">+ Add row</button>
+              <button id="logout-button" class="secondary-button" type="button">Sign out</button>
+            </div>
+          </header>
+          <p id="data-message" class="message" role="status"></p>
+          <section id="create-table-panel" class="add-row-panel" hidden>
+            <div class="form-heading">
+              <div>
+                <h3>Create a table</h3>
+                <p>Every new table starts with an auto-generated numeric ID.</p>
+              </div>
+              <button id="close-create-table" class="close-button" type="button" aria-label="Close create table form">×</button>
+            </div>
+            <form id="create-table-form">
+              <div class="form-field">
+                <label for="new-table-name">Table name</label>
+                <input id="new-table-name" name="name" pattern="[A-Za-z0-9_]{1,64}" required>
+              </div>
+              <div class="form-heading column-heading">
+                <div><h3>Columns</h3></div>
+                <button id="add-create-column" class="secondary-button" type="button">+ Add column</button>
+              </div>
+              <div id="create-table-columns" class="column-editor-list"></div>
+              <p id="create-table-error" class="message error" role="alert" hidden></p>
+              <div class="form-actions">
+                <button id="cancel-create-table" class="secondary-button" type="button">Cancel</button>
+                <button class="primary-button save-row-button" type="submit">Create table</button>
+              </div>
+            </form>
+          </section>
+          <section id="manage-columns-panel" class="add-row-panel" hidden>
+            <div class="form-heading">
+              <div>
+                <h3>Manage columns</h3>
+                <p>Add, rename, or remove columns from this table.</p>
+              </div>
+              <button id="close-manage-columns" class="close-button" type="button" aria-label="Close column manager">×</button>
+            </div>
+            <div id="column-list" class="column-list"></div>
+            <form id="add-column-form">
+              <div class="form-heading column-heading"><div><h3>Add a column</h3></div></div>
+              <div class="form-grid">
+                <div class="form-field">
+                  <label for="new-column-name">Column name</label>
+                  <input id="new-column-name" name="name" pattern="[A-Za-z0-9_]{1,64}" required>
+                </div>
+                <div class="form-field">
+                  <label for="new-column-type">Type</label>
+                  <select id="new-column-type" name="type" class="type-picker"></select>
+                </div>
+              </div>
+              <label class="checkbox-label"><input name="required" type="checkbox"> Required (NOT NULL)</label>
+              <p id="add-column-error" class="message error" role="alert" hidden></p>
+              <div class="form-actions"><button class="primary-button save-row-button" type="submit">Add column</button></div>
+            </form>
+          </section>
+          <section id="add-row-panel" class="add-row-panel" hidden>
+            <div class="form-heading">
+              <div>
+                <h3>Add a row</h3>
+                <p>Enter values for the new record.</p>
+              </div>
+              <button id="cancel-add-row" class="close-button" type="button" aria-label="Close add row form">×</button>
+            </div>
+            <form id="add-row-form">
+              <div id="add-row-fields" class="form-grid"></div>
+              <p id="add-row-error" class="message error" role="alert" hidden></p>
+              <div class="form-actions">
+                <button id="cancel-add-row-secondary" class="secondary-button" type="button">Cancel</button>
+                <button id="save-row-button" class="primary-button save-row-button" type="submit">Save row</button>
+              </div>
+            </form>
+          </section>
+          <section id="edit-row-panel" class="add-row-panel" hidden>
+            <div class="form-heading">
+              <div><h3>Edit row</h3><p>Update the selected record.</p></div>
+              <button id="cancel-edit-row" class="close-button" type="button" aria-label="Close edit row form">×</button>
+            </div>
+            <form id="edit-row-form">
+              <div id="edit-row-fields" class="form-grid"></div>
+              <p id="edit-row-error" class="message error" role="alert" hidden></p>
+              <div class="form-actions">
+                <button id="cancel-edit-row-secondary" class="secondary-button" type="button">Cancel</button>
+                <button class="primary-button save-row-button" type="submit">Save changes</button>
+              </div>
+            </form>
+          </section>
+          <div class="table-wrap">
+            <table id="data-table">
+              <thead></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          <p class="table-footnote">Showing up to 200 rows</p>
+        </div>
+      </section>
+    </main>
+    <script src="/app.js" defer></script>
+  </body>
+</html>

@@ -1,0 +1,14 @@
+{
+  "name": "mysql-table-viewer",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Login-protected web app for viewing a MySQL table",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "mysql2": "^3.14.0"
+  }
+}
